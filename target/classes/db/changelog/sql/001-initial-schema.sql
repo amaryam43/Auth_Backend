@@ -6,6 +6,6 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-INSERT INTO users (username, password, role)
+INSERT INTO users (user_name, password, role)
 VALUES
 ('admin', 'admin123', "ADMIN");
