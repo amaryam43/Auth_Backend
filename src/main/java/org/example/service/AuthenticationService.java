@@ -33,7 +33,7 @@ public class AuthenticationService {
 
         }
         // user exists
-        User user = userRepository.findByUsername(request.getUserName());
+        User user = userRepository.findByUserName(request.getUserName());
 
         // check password
         if (!user.getPassword().equals(request.getPassword())) {
