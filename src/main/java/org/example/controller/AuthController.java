@@ -2,7 +2,6 @@ package org.example.controller;
 
 import jakarta.validation.Valid;
 import org.example.model.dto.auth.LoginRequest;
-import org.example.model.dto.auth.LoginResponse;
 import org.example.repository.SessionRepository;
 import org.example.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RestController;
 
+@RestController
 public class AuthController {
 
     @Autowired

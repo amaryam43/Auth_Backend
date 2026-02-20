@@ -8,4 +8,4 @@ CREATE TABLE IF NOT EXISTS users (
 
 INSERT INTO users (user_name, password, role)
 VALUES
-('admin', 'admin123', "ADMIN");
+('admin', 'admin123', 'ADMIN');

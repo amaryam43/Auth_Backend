@@ -9,7 +9,7 @@ org\example\model\dto\auth\LoginRequest$LoginRequestBuilder.class
 org\example\Auth_Backend_Application.class
 org\example\entity\Session.class
 org\example\repository\SessionRepository.class
-org\example\service\SessionCleaupService.class
 org\example\model\dto\auth\LoginResponse.class
+org\example\service\SessionCleanupService.class
 org\example\config\SecurityConfig.class
 org\example\model\dto\auth\LoginResponse$LoginResponseBuilder.class
