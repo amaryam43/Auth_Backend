@@ -21,7 +21,7 @@ public class SecurityConfig implements WebMvcConfigurer {
         // Allow all origins (for development)
         // In production, replace with specific origins:
         // configuration.setAllowedOrigins(Arrays.asList("https://yourdomain.com", "https://app.yourdomain.com"));
-        configuration.setAllowedOriginPatterns(List.of("https://auth-app-hazel.vercel.app"));
+        configuration.setAllowedOrigins(List.of("https://auth-app-hazel.vercel.app"));
 
         // Allow all HTTP methods
         configuration.setAllowedMethods(Arrays.asList(
