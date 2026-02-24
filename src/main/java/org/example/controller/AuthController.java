@@ -1,83 +1,70 @@
 package org.example.controller;
 
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.example.entity.User;
 import org.example.model.dto.auth.LoginRequest;
-import org.example.model.dto.auth.LoginResponse;
 import org.example.repository.UserRepository;
-import org.example.service.AuthenticationService;
 import org.example.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
+@RequestMapping("/auth")
 public class AuthController {
 
     @Autowired
-    private AuthenticationService authenticationService;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        log.info("Login request received");
+        log.info("finding user with username : {} and password : {}", request.getUserName(), request.getPassword());
+        User user = userRepository.findByUserName(request.getUserName());
+        log.info("User found, {}" ,user);
 
-        if (authenticationService.authenticate(loginRequest)) {
+        if (user != null && user.getPassword().equals(request.getPassword())) { // add proper hash check in prod
+            log.info("User password is correct");
+            // 24 hours
+            int TOKEN_EXPIRY = 24 * 60 * 60;
 
-            int tokenExpirySeconds = 24 * 60 * 60; // 24h
-            String token = jwtUtil.generateToken(loginRequest.getUserName(), tokenExpirySeconds);
-
-            User user = userRepository.findByUserName(loginRequest.getUserName());
-
-            long sessionExpiresAt = System.currentTimeMillis() + (tokenExpirySeconds * 1000L);
-
-            LoginResponse loginResponse = LoginResponse.builder()
-                    .userName(user.getUserName())
-                    .role(user.getRole())
-                    .sessionExpiresAt(sessionExpiresAt)
-                    .build();
+            log.info("Generating Token...");
+            String token = jwtUtil.generateToken(user.getUserName(), TOKEN_EXPIRY);
+            log.info("Token generated");
 
             ResponseCookie cookie = ResponseCookie.from("token", token)
                     .httpOnly(true)
-                    .secure(true) // HTTPS only
+                    .secure(true) // true in prod
                     .path("/")
-                    .maxAge(tokenExpirySeconds)
-                    .sameSite("None") // required for cross-domain
+                    .sameSite("None") // cross-domain
+                    .maxAge(TOKEN_EXPIRY)
                     .build();
+            log.info("Cookie generated");
 
-            return ResponseEntity
-                    .ok()
+            return ResponseEntity.ok()
                     .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                    .body(loginResponse);
-        } else {
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body("Login failed");
+                    .body(user); // send minimal info
         }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed");
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletResponse response) {
-
+    public ResponseEntity<?> logout() {
         ResponseCookie cookie = ResponseCookie.from("token", "")
                 .httpOnly(true)
-                .secure(true)
+                .secure(false)
                 .path("/")
-                .maxAge(0)  // deletes cookie
                 .sameSite("None")
+                .maxAge(0) // immediately expire
                 .build();
 
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-
-        return ResponseEntity.ok("Logged out successfully");
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body("Logged out");
     }
-
 }
