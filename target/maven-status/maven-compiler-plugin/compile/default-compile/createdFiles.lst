@@ -1,13 +1,16 @@
 org\example\model\dto\auth\MyUserDetails.class
+org\example\model\dto\auth\SignupRequest.class
 org\example\controller\AuthController.class
 org\example\service\MyUserDetailsService.class
 org\example\entity\User$UserBuilder.class
 org\example\entity\User.class
 org\example\util\JwtFilter.class
 org\example\model\dto\auth\LoginRequest.class
+org\example\model\dto\auth\SignupRequest$SignupRequestBuilder.class
 org\example\service\AuthenticationService.class
 org\example\repository\UserRepository.class
 org\example\model\dto\auth\LoginRequest$LoginRequestBuilder.class
+org\example\config\PasswordConfig.class
 org\example\Auth_Backend_Application.class
 org\example\model\dto\auth\LoginResponse.class
 org\example\config\SecurityConfig.class

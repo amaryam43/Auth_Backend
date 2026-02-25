@@ -5,7 +5,3 @@ CREATE TABLE IF NOT EXISTS users (
     role TEXT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
-
-INSERT INTO users (user_name, password, role)
-VALUES
-('admin', 'admin123', 'ADMIN');
